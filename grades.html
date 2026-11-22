@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PESU CGPA &amp; Marks Studio</title>
-  <!-- PDF.js for client-side PESU Grade Card / Result PDF parsing -->
+  <title>Grades &amp; CGPA Studio</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     :root {
-      --bg: #0b1120;
-      --panel: #131c31;
-      --panel-2: #1b2742;
-      --border: #28385c;
+      --bg: #050a14;
+      --surface: #0b1324;
+      --surface-2: #111c33;
+      --border: #1e2d4a;
       --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-2: #818cf8;
+      --muted: #8b9bb4;
+      --blue: #2563eb;
+      --blue-bright: #3b82f6;
+      --cyan: #38bdf8;
       --green: #22c55e;
       --amber: #f59e0b;
       --red: #ef4444;
@@ -31,91 +31,128 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding: 20px;
-      line-height: 1.5;
-    }
-
-    .app {
-      max-width: 1260px;
-      margin: 0 auto;
+      min-height: 100vh;
+      padding-bottom: 92px;
+      line-height: 1.45;
     }
 
     /* Top Header */
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(5, 10, 20, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 16px;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
       align-items: center;
-      gap: 14px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 20px;
-      margin-bottom: 18px;
-    }
-
-    .brand h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .brand p {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .topbar-actions {
-      display: flex;
+      justify-content: space-between;
+      gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .user-pill {
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: var(--cyan);
+      font-size: 1rem;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .chip {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      padding: 6px 12px;
+      gap: 6px;
+      font-size: 0.78rem;
+      padding: 5px 11px;
       border-radius: 999px;
-      font-size: 0.84rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     button {
-      background: var(--accent);
-      color: #081120;
+      background: var(--blue);
+      color: #ffffff;
       border: none;
       padding: 8px 14px;
-      border-radius: 9px;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease, transform 0.1s ease;
     }
 
     button:hover {
-      filter: brightness(1.08);
+      background: var(--blue-bright);
     }
 
-    button.secondary {
-      background: var(--panel-2);
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button.ghost {
+      background: var(--surface-2);
       color: var(--text);
       border: 1px solid var(--border);
     }
 
-    button.secondary:hover {
-      border-color: var(--accent);
+    button.ghost:hover {
+      border-color: var(--blue-bright);
     }
 
     button.google-btn {
       background: #ffffff;
       color: #0f172a;
-      border: 1px solid #cbd5e1;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      padding: 7px 12px;
+      font-size: 0.82rem;
     }
 
     button.danger {
@@ -123,140 +160,171 @@
       color: #fca5a5;
       border: 1px solid rgba(239, 68, 68, 0.35);
       padding: 5px 10px;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
     }
 
     button.danger:hover {
       background: var(--red);
-      color: #fff;
+      color: #ffffff;
     }
 
-    /* KPI Strip */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 14px;
+    /* Main Container */
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px;
+    }
+
+    .notice-banner {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .notice-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Empty / Setup Hero Card (matches reference card style) */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 24px;
+      text-align: center;
       margin-bottom: 18px;
     }
 
-    .kpi {
-      background: var(--panel);
-      border: 1px solid var(--border);
+    .hero-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 14px;
       border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      color: var(--muted);
+    }
+
+    .hero-card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .hero-card p {
+      max-width: 460px;
+      margin: 0 auto 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* Stats & Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       padding: 16px;
     }
 
-    .kpi-label {
-      font-size: 0.76rem;
+    .stat-label {
+      font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--muted);
     }
 
-    .kpi-val {
+    .stat-val {
       font-size: 1.65rem;
       font-weight: 700;
+      color: var(--cyan);
       margin-top: 4px;
-      color: var(--accent);
     }
 
-    .kpi-sub {
-      font-size: 0.82rem;
+    .stat-sub {
+      font-size: 0.8rem;
       color: var(--muted);
       margin-top: 4px;
     }
 
-    /* Workspace Layout */
-    .workspace {
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    @media (max-width: 980px) {
-      .workspace {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .stack {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
     .card {
-      background: var(--panel);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 18px;
+      margin-bottom: 16px;
     }
 
-    .card-header {
+    .card-head {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 14px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
     }
 
-    .card-header h2 {
-      font-size: 1.06rem;
+    .card-head h3 {
+      font-size: 1.02rem;
       font-weight: 700;
     }
 
-    .badge {
-      font-size: 0.76rem;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-
-    /* Tabs */
-    .tabs {
+    .pill-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 14px;
     }
 
-    .tab-btn {
-      background: var(--panel-2);
+    .pill-btn {
+      background: var(--surface-2);
       color: var(--muted);
       border: 1px solid var(--border);
       padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.83rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
     }
 
-    .tab-btn.active {
-      background: rgba(56, 189, 248, 0.16);
+    .pill-btn.active {
+      background: rgba(37, 99, 235, 0.22);
       color: var(--text);
-      border-color: var(--accent);
+      border-color: var(--blue-bright);
     }
 
-    /* Form Grid */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .col-12 { grid-column: span 12; }
-    .col-8 { grid-column: span 8; }
     .col-6 { grid-column: span 6; }
     .col-4 { grid-column: span 4; }
     .col-3 { grid-column: span 3; }
 
     @media (max-width: 640px) {
-      .col-8, .col-6, .col-4, .col-3 { grid-column: span 12; }
+      .col-6, .col-4, .col-3 { grid-column: span 12; }
     }
 
     label {
@@ -271,39 +339,35 @@
       background: var(--bg);
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 10px;
+      border-radius: 10px;
+      padding: 9px 11px;
       font-size: 0.88rem;
     }
 
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--blue-bright);
     }
 
     textarea {
-      min-height: 82px;
+      min-height: 84px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 0.78rem;
-      resize: vertical;
     }
 
-    /* Preview Pill */
-    .live-preview {
+    .preview-bar {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      padding: 10px 14px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
+      gap: 10px;
+      font-size: 0.86rem;
     }
 
-    /* Table */
     .table-wrap {
       overflow-x: auto;
     }
@@ -317,7 +381,7 @@
     th, td {
       text-align: left;
       padding: 9px 8px;
-      border-bottom: 1px solid rgba(40, 56, 92, 0.6);
+      border-bottom: 1px solid rgba(30, 45, 74, 0.7);
     }
 
     th {
@@ -332,28 +396,27 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .empty-state {
+    .empty-msg {
       text-align: center;
       color: var(--muted);
-      padding: 20px 10px;
+      padding: 18px;
       font-size: 0.88rem;
     }
 
     .result-box {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 12px 14px;
-      margin-top: 10px;
-      font-size: 0.86rem;
+      font-size: 0.88rem;
     }
 
     .ok { color: var(--green); font-weight: 600; }
     .warn { color: var(--amber); font-weight: 600; }
     .bad { color: var(--red); font-weight: 600; }
 
-    .status-line {
-      font-size: 0.81rem;
+    .helper {
+      font-size: 0.8rem;
       color: var(--muted);
       margin-top: 8px;
     }
@@ -361,334 +424,408 @@
     .hidden {
       display: none !important;
     }
+
+    /* Bottom Navigation Bar (matches reference screenshot) */
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: rgba(8, 15, 29, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border);
+    }
+
+    .bottom-nav-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      height: 70px;
+      padding: 0 12px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      padding: 6px 4px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      color: var(--blue-bright);
+    }
+
+    .nav-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .fab-btn {
+      width: 50px;
+      height: 50px;
+      margin: -18px auto 0;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    .fab-btn:hover {
+      background: var(--blue-bright);
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <!-- Top Header -->
-    <header class="topbar">
-      <div class="brand">
-        <h1>PESU CGPA &amp; Marks Studio</h1>
-        <p>ISA/ESA calculator, direct marks &amp; grade entry, PDF grade-card parser &amp; Firebase cloud sync</p>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <div class="brand-icon">G</div>
+        <span class="brand-title">Grades</span>
+        <span class="chip" id="scaleChip">10.0 CGPA</span>
+        <span class="status-pill">
+          <span class="dot" id="syncDot"></span>
+          <span id="authLabel">Local Mode</span>
+        </span>
       </div>
-      <div class="topbar-actions">
-        <div class="user-pill">
-          <span id="authStatusLabel">Guest Mode (Local / Sync Key)</span>
-        </div>
-        <button class="google-btn" id="googleSignInBtn" type="button">Sign in with Google</button>
-        <button class="secondary hidden" id="googleSignOutBtn" type="button">Sign Out</button>
-        <button class="secondary" id="pullSyncBtn" type="button">Sync Now</button>
-        <button class="secondary" id="exportJsonBtn" type="button">Export JSON</button>
-        <button class="secondary" id="importJsonBtn" type="button">Import JSON</button>
+
+      <div class="header-actions">
+        <button type="button" class="google-btn" id="googleSignInBtn">Sign in with Google</button>
+        <button type="button" class="ghost hidden" id="googleSignOutBtn">Sign Out</button>
+        <button type="button" class="ghost" id="pullSyncBtn">Sync</button>
+        <button type="button" class="ghost" id="exportJsonBtn">Export</button>
+        <button type="button" class="ghost" id="importJsonBtn">Import</button>
         <input type="file" id="importFileInput" accept="application/json" hidden />
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- Summary KPI Cards -->
-    <section class="kpi-grid">
-      <div class="kpi">
-        <div class="kpi-label">Cumulative CGPA</div>
-        <div class="kpi-val" id="cgpaValue">0.00</div>
-        <div class="kpi-sub" id="cgpaSub">0 total graded credits</div>
+  <main class="container">
+    <!-- Top-right quick alert pill -->
+    <div class="notice-banner">
+      <button type="button" class="notice-pill" id="jumpSimulatorBtn">
+        <span>Target CGPA Simulator</span>
+      </button>
+    </div>
+
+    <!-- VIEW 1: OVERVIEW -->
+    <section id="view-overview" class="view-section">
+      <div class="hero-card" id="emptyHeroCard">
+        <div class="hero-icon">⚙</div>
+        <h2>Academic Tracking Ready</h2>
+        <p>Add your subjects, ISA/ESA marks, lab/result PDFs, or configure Firebase cloud sync to view your live SGPA, CGPA, and semester summaries.</p>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button type="button" id="heroAddSubjectBtn">+ Add First Subject</button>
+          <button type="button" class="ghost" id="heroOpenSettingsBtn">Configure Firebase Sync</button>
+        </div>
       </div>
-      <div class="kpi">
-        <div class="kpi-label">Active Semester SGPA</div>
-        <div class="kpi-val" id="activeSgpaValue">0.00</div>
-        <div class="kpi-sub" id="activeSgpaSub">Semester 1</div>
+
+      <div class="kpi-grid">
+        <div class="stat-card">
+          <div class="stat-label">Cumulative CGPA</div>
+          <div class="stat-val" id="cgpaVal">0.00</div>
+          <div class="stat-sub" id="cgpaSub">0 graded credits</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Semester SGPA</div>
+          <div class="stat-val" id="sgpaVal">0.00</div>
+          <div class="stat-sub" id="sgpaSub">Semester 1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Equivalent Percentage</div>
+          <div class="stat-val" id="pctVal">0.0%</div>
+          <div class="stat-sub" id="pctSub">CGPA × 10</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Credits</div>
+          <div class="stat-val" id="creditsVal">0</div>
+          <div class="stat-sub" id="semCountSub">1 semester</div>
+        </div>
       </div>
-      <div class="kpi">
-        <div class="kpi-label">Equivalent Percentage</div>
-        <div class="kpi-val" id="pctValue">0.0%</div>
-        <div class="kpi-sub" id="pctFormulaLabel">Formula: CGPA × 10</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Total Credits Earned</div>
-        <div class="kpi-val" id="totalCreditsValue">0</div>
-        <div class="kpi-sub" id="semCountSub">Across 1 semester</div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Semester Breakdown</h3>
+          <span class="chip" id="semSummaryChip">1 Semester</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Semester</th>
+                <th class="num">Subjects</th>
+                <th class="num">Credits</th>
+                <th class="num">SGPA</th>
+              </tr>
+            </thead>
+            <tbody id="semSummaryBody"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
-    <div class="workspace">
-      <!-- Left Column: Semester & Subject Entry -->
-      <div class="stack">
-        <section class="card">
-          <div class="card-header">
-            <h2>Semester &amp; Subject Marks Calculator</h2>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button class="secondary" id="addSemBtn" type="button">+ Add Semester</button>
-              <button class="danger" id="deleteSemBtn" type="button">Delete Sem</button>
-            </div>
+    <!-- VIEW 2: SUBJECTS & MARKS ENTRY -->
+    <section id="view-subjects" class="view-section hidden">
+      <div class="card">
+        <div class="card-head">
+          <h3>Semesters</h3>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="ghost" id="addSemBtn">+ Add Semester</button>
+            <button type="button" class="danger" id="deleteSemBtn">Delete</button>
           </div>
+        </div>
+        <div class="pill-row" id="semTabs"></div>
 
-          <!-- Semester Switcher -->
-          <div class="tabs" id="semTabs"></div>
+        <div class="card-head" style="margin-top:8px;">
+          <h3>Add Subject Marks / Grade</h3>
+        </div>
 
-          <!-- Input Mode Switcher -->
-          <div class="tabs" id="modeTabs">
-            <button type="button" class="tab-btn active" data-mode="isa">1. ISA1 + ISA2 + Assign + ESA</button>
-            <button type="button" class="tab-btn" data-mode="direct_marks">2. Direct Total Marks &rarr; CGPA</button>
-            <button type="button" class="tab-btn" data-mode="direct_gp">3. Direct Grade Point</button>
-            <button type="button" class="tab-btn" data-mode="pdf_import">4. Lab / Result PDF Upload</button>
-          </div>
+        <div class="pill-row" id="modeTabs">
+          <button type="button" class="pill-btn active" data-mode="isa">ISA1 + ISA2 + Assign + ESA</button>
+          <button type="button" class="pill-btn" data-mode="direct_marks">Direct Total Marks &rarr; CGPA</button>
+          <button type="button" class="pill-btn" data-mode="direct_gp">Direct Grade Point</button>
+          <button type="button" class="pill-btn" data-mode="pdf_import">Lab / Result PDF</button>
+        </div>
 
-          <!-- Course Form (Modes 1, 2, 3) -->
-          <form id="courseForm">
-            <div class="form-grid">
-              <div class="col-6">
-                <label for="courseName">Subject / Course Name</label>
-                <input type="text" id="courseName" placeholder="e.g., Digital Design & Computer Org" required />
-              </div>
-              <div class="col-3">
-                <label for="courseCode">Course Code</label>
-                <input type="text" id="courseCode" placeholder="e.g., UE24CS251A" />
-              </div>
-              <div class="col-3">
-                <label for="courseCredits">Credits</label>
-                <input type="number" id="courseCredits" min="0.5" max="30" step="0.5" value="4" required />
-              </div>
-            </div>
-
-            <!-- MODE 1: ISA1 + ISA2 + Assignment + ESA (+ optional Lab) -->
-            <div id="panelIsa" class="form-grid">
-              <div class="col-4">
-                <label for="subjectCategory">Subject Format</label>
-                <select id="subjectCategory">
-                  <option value="non_lab">Theory / Non-Lab: (ISA1+ISA2)/2 + Assign + ESA/2</option>
-                  <option value="with_lab">Theory + Lab: Weighted Theory + Lab Marks</option>
-                </select>
-              </div>
-              <div class="col-4">
-                <label for="isa1Input">ISA 1 (out of 40 or 50)</label>
-                <input type="number" id="isa1Input" min="0" max="100" step="0.5" placeholder="e.g., 34" />
-              </div>
-              <div class="col-4">
-                <label for="isa2Input">ISA 2 (out of 40 or 50)</label>
-                <input type="number" id="isa2Input" min="0" max="100" step="0.5" placeholder="e.g., 36" />
-              </div>
-              <div class="col-4">
-                <label for="assignInput">Assignment / Internal</label>
-                <input type="number" id="assignInput" min="0" max="100" step="0.5" placeholder="e.g., 10" />
-              </div>
-              <div class="col-4">
-                <label for="esaInput">ESA Marks (out of 100)</label>
-                <input type="number" id="esaInput" min="0" max="100" step="0.5" placeholder="e.g., 82" />
-              </div>
-              <div class="col-4 hidden" id="labMarksWrap">
-                <label for="labMarksInput">Lab Component Marks (out of 100)</label>
-                <input type="number" id="labMarksInput" min="0" max="100" step="0.5" placeholder="e.g., 90" />
-              </div>
-            </div>
-
-            <!-- MODE 2: Direct Total Marks -->
-            <div id="panelDirectMarks" class="form-grid hidden">
-              <div class="col-6">
-                <label for="directTotalMarksInput">Direct Total Marks (out of 100)</label>
-                <input type="number" id="directTotalMarksInput" min="0" max="100" step="0.1" placeholder="e.g., 86.5" />
-              </div>
-              <div class="col-6">
-                <label for="directMarksType">Course Type</label>
-                <select id="directMarksType">
-                  <option value="Theory">Theory / Core</option>
-                  <option value="Lab">Lab / Practical</option>
-                  <option value="Elective">Elective</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- MODE 3: Direct Grade Point -->
-            <div id="panelDirectGp" class="form-grid hidden">
-              <div class="col-6">
-                <label for="directGpSelect">Letter Grade &amp; Grade Point</label>
-                <select id="directGpSelect">
-                  <option value="10">S (90–100) &rarr; 10</option>
-                  <option value="9">A (80–89) &rarr; 9</option>
-                  <option value="8" selected>B (70–79) &rarr; 8</option>
-                  <option value="7">C (60–69) &rarr; 7</option>
-                  <option value="6">D (50–59) &rarr; 6</option>
-                  <option value="5">E (40–49) &rarr; 5</option>
-                  <option value="0">F (&lt;40 / Backlog) &rarr; 0</option>
-                </select>
-              </div>
-              <div class="col-6">
-                <label for="directGpType">Course Type</label>
-                <select id="directGpType">
-                  <option value="Theory">Theory / Core</option>
-                  <option value="Lab">Lab / Practical</option>
-                  <option value="Audit">Audit / Non-Credit</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Live Preview Bar -->
-            <div class="live-preview" id="livePreviewBar">
-              <span>Computed Total: <strong id="previewTotalMarks">0.00</strong> / 100</span>
-              <span>Grade: <strong id="previewLetterGrade">F</strong> (GP: <strong id="previewGp">0</strong>)</span>
-              <button type="submit">+ Add Subject</button>
-            </div>
-          </form>
-
-          <!-- MODE 4: Lab / Result PDF Upload -->
-          <div id="panelPdfImport" class="hidden" style="margin-bottom: 14px;">
-            <div class="result-box">
-              <strong>Upload PESU Lab Rubrics / Grade Card / Result PDF</strong>
-              <p class="status-line" style="margin-bottom: 10px;">
-                Parses your PDF locally in the browser to extract course codes, credits, marks, or grades (<code>S, A, B, C, D, E, F</code>) and adds them to the active semester.
-              </p>
-              <input type="file" id="pdfUploadInput" accept="application/pdf" />
-              <p class="status-line" id="pdfParseStatus"></p>
-            </div>
-          </div>
-
-          <!-- Added Subjects Table -->
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Subject</th>
-                  <th>Breakdown / Mode</th>
-                  <th class="num">Total</th>
-                  <th class="num">Credits</th>
-                  <th class="num">Grade (GP)</th>
-                  <th class="num">Action</th>
-                </tr>
-              </thead>
-              <tbody id="courseTableBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- Semester-by-Semester Summary -->
-        <section class="card">
-          <div class="card-header">
-            <h2>Semester-by-Semester CGPA Overview</h2>
-            <span class="badge" id="semOverviewBadge">1 Semester</span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Semester</th>
-                  <th class="num">Subjects</th>
-                  <th class="num">Credits</th>
-                  <th class="num">SGPA</th>
-                </tr>
-              </thead>
-              <tbody id="semSummaryBody"></tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-
-      <!-- Right Column: PESU Portal Auto-Fetch, Target Simulator & Firebase Sync -->
-      <div class="stack">
-        <!-- PESU Academy Direct Login & Auto-Fetch -->
-        <section class="card">
-          <div class="card-header">
-            <h2>PESU Academy Auto-Fetch</h2>
-            <span class="badge">SRN / PRN</span>
-          </div>
-          <form id="pesuFetchForm" class="form-grid">
-            <div class="col-6">
-              <label for="pesuUserInput">PESU SRN / PRN / Email</label>
-              <input type="text" id="pesuUserInput" placeholder="e.g., PES1UG26CS..." autocomplete="username" required />
-            </div>
-            <div class="col-6">
-              <label for="pesuPassInput">PESU Academy Password</label>
-              <input type="password" id="pesuPassInput" placeholder="••••••••" autocomplete="current-password" required />
-            </div>
-            <div class="col-12">
-              <label for="pesuApiEndpointInput">PESU Fetch API / Proxy Endpoint URL</label>
-              <input
-                type="url"
-                id="pesuApiEndpointInput"
-                placeholder="https://your-pesu-api.vercel.app/api/marks"
-              />
-            </div>
-            <div class="col-12" style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="submit">Fetch Marks Automatically</button>
-            </div>
-          </form>
-          <p class="status-line" id="pesuFetchStatus">
-            Credentials are never stored in browser storage or Firebase. Because <code>pesuacademy.com</code> blocks direct browser requests (CORS), enter a PESU scraper endpoint URL (like a self-hosted <code>pesu-dash</code> backend) or use <strong>Tab 4: PDF Upload</strong> to import your PESU result PDF directly.
-          </p>
-        </section>
-
-        <!-- Target CGPA Simulator -->
-        <section class="card">
-          <div class="card-header">
-            <h2>Target CGPA Simulator</h2>
-            <span class="badge">Planner</span>
-          </div>
+        <form id="subjectForm">
           <div class="form-grid">
             <div class="col-6">
-              <label for="targetCgpaInput">Target CGPA</label>
-              <input type="number" id="targetCgpaInput" min="0" max="10" step="0.05" value="8.50" />
+              <label for="subName">Subject Name</label>
+              <input type="text" id="subName" placeholder="e.g., Operating Systems" required />
+            </div>
+            <div class="col-3">
+              <label for="subCode">Course Code</label>
+              <input type="text" id="subCode" placeholder="e.g., UE24CS252A" />
+            </div>
+            <div class="col-3">
+              <label for="subCredits">Credits</label>
+              <input type="number" id="subCredits" min="0.5" max="30" step="0.5" value="4" required />
+            </div>
+          </div>
+
+          <!-- Mode 1: ISA + Assignment + ESA (+ Lab) -->
+          <div id="panelIsa" class="form-grid">
+            <div class="col-6">
+              <label for="subFormat">Subject Format</label>
+              <select id="subFormat">
+                <option value="non_lab">Non-Lab: (ISA1 + ISA2)/2 + Assignment + ESA/2</option>
+                <option value="with_lab">With Lab: Theory + Lab Marks</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <label for="isa1">ISA 1</label>
+              <input type="number" id="isa1" min="0" max="100" step="0.5" placeholder="0" />
+            </div>
+            <div class="col-3">
+              <label for="isa2">ISA 2</label>
+              <input type="number" id="isa2" min="0" max="100" step="0.5" placeholder="0" />
+            </div>
+            <div class="col-4">
+              <label for="assignMarks">Assignment</label>
+              <input type="number" id="assignMarks" min="0" max="100" step="0.5" placeholder="0" />
+            </div>
+            <div class="col-4">
+              <label for="esaMarks">ESA Marks</label>
+              <input type="number" id="esaMarks" min="0" max="100" step="0.5" placeholder="0" />
+            </div>
+            <div class="col-4 hidden" id="labFieldBox">
+              <label for="labMarks">Lab Marks (out of 100)</label>
+              <input type="number" id="labMarks" min="0" max="100" step="0.5" placeholder="0" />
+            </div>
+          </div>
+
+          <!-- Mode 2: Direct Total Marks -->
+          <div id="panelDirectMarks" class="form-grid hidden">
+            <div class="col-6">
+              <label for="directMarksInput">Total Marks (out of 100)</label>
+              <input type="number" id="directMarksInput" min="0" max="100" step="0.1" placeholder="e.g., 85" />
             </div>
             <div class="col-6">
-              <label for="upcomingCreditsInput">Upcoming Credits</label>
-              <input type="number" id="upcomingCreditsInput" min="1" max="120" step="0.5" value="22" />
-            </div>
-          </div>
-          <div class="result-box" id="simulatorOutput">Enter your target CGPA and upcoming credits.</div>
-        </section>
-
-        <!-- Percentage Formula -->
-        <section class="card">
-          <div class="card-header">
-            <h2>Percentage Conversion Rule</h2>
-            <span class="badge">10-Point Scale</span>
-          </div>
-          <div class="form-grid">
-            <div class="col-12">
-              <label for="pctFormulaSelect">Conversion Formula</label>
-              <select id="pctFormulaSelect">
-                <option value="mul10">CGPA × 10 (Standard PESU)</option>
-                <option value="sub075_mul10">(CGPA − 0.75) × 10</option>
-                <option value="mul95">CGPA × 9.5</option>
-                <option value="sub05_mul10">(CGPA − 0.50) × 10</option>
+              <label for="directMarksKind">Category</label>
+              <select id="directMarksKind">
+                <option value="Theory">Theory</option>
+                <option value="Lab">Lab</option>
+                <option value="Elective">Elective</option>
               </select>
             </div>
           </div>
-        </section>
 
-        <!-- Firebase Auth + Realtime Database Sync -->
-        <section class="card">
-          <div class="card-header">
-            <h2>Firebase &amp; Google Sign-In Sync</h2>
-            <span class="badge" id="syncBadge">Local Cache</span>
-          </div>
-          <div class="form-grid">
-            <div class="col-12">
-              <label for="dbUrlInput">Firebase Realtime Database URL</label>
-              <input
-                type="url"
-                id="dbUrlInput"
-                placeholder="https://expensesmy-default-rtdb.asia-southeast1.firebasedatabase.app"
-              />
+          <!-- Mode 3: Direct Grade Point -->
+          <div id="panelDirectGp" class="form-grid hidden">
+            <div class="col-6">
+              <label for="directGpInput">Grade &amp; Grade Point</label>
+              <select id="directGpInput">
+                <option value="10">S (10)</option>
+                <option value="9">A (9)</option>
+                <option value="8" selected>B (8)</option>
+                <option value="7">C (7)</option>
+                <option value="6">D (6)</option>
+                <option value="5">E (5)</option>
+                <option value="0">F (0)</option>
+              </select>
             </div>
-            <div class="col-12">
-              <label for="syncKeyInput">Sync Key (when not signed in with Google)</label>
-              <input type="text" id="syncKeyInput" placeholder="e.g., subh-pesu-cgpa" />
-            </div>
-            <div class="col-12">
-              <label for="firebaseConfigInput">Firebase Web Config JSON (for Google Sign-In)</label>
-              <textarea
-                id="firebaseConfigInput"
-                placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://...","projectId":"...","appId":"..."}'
-              ></textarea>
-            </div>
-            <div class="col-12" style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" id="saveFirebaseBtn">Save &amp; Connect</button>
-              <button type="button" class="secondary" id="pushSyncBtn">Push to Cloud</button>
+            <div class="col-6">
+              <label for="directGpKind">Category</label>
+              <select id="directGpKind">
+                <option value="Theory">Theory</option>
+                <option value="Lab">Lab</option>
+                <option value="Audit">Audit / Non-Credit</option>
+              </select>
             </div>
           </div>
-          <p class="status-line" id="cloudLog">Saved locally in browser. Connect Firebase to sync across devices.</p>
-        </section>
+
+          <div class="preview-bar">
+            <span>Total: <strong id="prevTotal">0.00</strong> / 100</span>
+            <span>Grade: <strong id="prevGrade">F</strong> (GP: <strong id="prevGp">0</strong>)</span>
+            <button type="submit">+ Save Subject</button>
+          </div>
+        </form>
+
+        <!-- Mode 4: PDF Upload -->
+        <div id="panelPdf" class="result-box hidden" style="margin-top: 12px;">
+          <strong>Upload Lab / Result PDF</strong>
+          <p class="helper" style="margin-bottom: 10px;">
+            Extracts course codes, credits, marks, or grades locally in your browser using PDF.js.
+          </p>
+          <input type="file" id="pdfFileInput" accept="application/pdf" />
+          <p class="helper" id="pdfStatus"></p>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Firebase Modular SDK -->
+      <div class="card">
+        <div class="card-head">
+          <h3 id="activeSemHeading">Semester 1 Subjects</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Details</th>
+                <th class="num">Total</th>
+                <th class="num">Credits</th>
+                <th class="num">Grade</th>
+                <th class="num">Action</th>
+              </tr>
+            </thead>
+            <tbody id="subjectTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: TARGET CGPA SIMULATOR -->
+    <section id="view-simulator" class="view-section hidden">
+      <div class="card">
+        <div class="card-head">
+          <h3>Target CGPA Simulator</h3>
+          <span class="chip">Planner</span>
+        </div>
+        <div class="form-grid">
+          <div class="col-6">
+            <label for="targetCgpa">Target CGPA</label>
+            <input type="number" id="targetCgpa" min="0" max="10" step="0.05" value="8.50" />
+          </div>
+          <div class="col-6">
+            <label for="upcomingCredits">Upcoming Credits</label>
+            <input type="number" id="upcomingCredits" min="1" max="120" step="0.5" value="22" />
+          </div>
+        </div>
+        <div class="result-box" id="simResult">Enter your target CGPA and upcoming credits.</div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: SETTINGS & FIREBASE SYNC -->
+    <section id="view-settings" class="view-section hidden">
+      <div class="card">
+        <div class="card-head">
+          <h3>Percentage Conversion Rule</h3>
+        </div>
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="pctRuleSelect">Formula</label>
+            <select id="pctRuleSelect">
+              <option value="mul10">CGPA × 10</option>
+              <option value="sub075_mul10">(CGPA − 0.75) × 10</option>
+              <option value="mul95">CGPA × 9.5</option>
+              <option value="sub05_mul10">(CGPA − 0.50) × 10</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Firebase &amp; Google Sign-In Sync</h3>
+          <span class="chip" id="syncChip">Local</span>
+        </div>
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="fbDbUrl">Firebase Realtime Database URL</label>
+            <input type="url" id="fbDbUrl" placeholder="https://your-project-default-rtdb.firebaseio.com" />
+          </div>
+          <div class="col-12">
+            <label for="fbSyncKey">Sync Key (used when not signed in with Google)</label>
+            <input type="text" id="fbSyncKey" placeholder="e.g., personal-grades-key" />
+          </div>
+          <div class="col-12">
+            <label for="fbWebConfig">Firebase Web Config JSON (required for Google Sign-In)</label>
+            <textarea id="fbWebConfig" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://...","projectId":"...","appId":"..."}'></textarea>
+          </div>
+          <div class="col-12" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" id="saveSyncBtn">Save &amp; Connect</button>
+            <button type="button" class="ghost" id="pushSyncBtn">Push to Cloud</button>
+          </div>
+        </div>
+        <p class="helper" id="syncLog">Saved locally in browser.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav" aria-label="Primary Navigation">
+    <div class="bottom-nav-inner">
+      <button type="button" class="nav-btn active" data-view="overview">
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="subjects">
+        <span class="nav-icon">☰</span>
+        <span>Subjects</span>
+      </button>
+      <button type="button" class="fab-btn" id="fabAddBtn" title="Add Subject" aria-label="Add Subject">+</button>
+      <button type="button" class="nav-btn" data-view="simulator">
+        <span class="nav-icon">◔</span>
+        <span>Target</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="settings">
+        <span class="nav-icon">⚙</span>
+        <span>Settings</span>
+      </button>
+    </div>
+  </nav>
+
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -704,39 +841,32 @@
         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     }
 
-    const STORAGE_KEY = "pesu_cgpa_studio_v2";
-    const SYNC_CFG_KEY = "pesu_cgpa_sync_cfg_v2";
+    const STATE_KEY = "grades_studio_state_v3";
+    const SYNC_KEY = "grades_studio_sync_v3";
 
     const defaultState = {
-      semesters: [
-        {
-          id: "sem-1",
-          name: "Semester 1",
-          courses: []
-        }
-      ],
+      semesters: [{ id: "sem-1", name: "Semester 1", courses: [] }],
       activeSemId: "sem-1",
-      pctFormula: "mul10",
+      pctRule: "mul10",
       targetCgpa: 8.5,
       upcomingCredits: 22
     };
 
-    const defaultSyncCfg = {
+    const defaultSync = {
       dbUrl: "",
       syncKey: "",
-      firebaseConfigText: "",
-      pesuApiEndpoint: ""
+      webConfigText: ""
     };
 
     let state = loadState();
-    let syncCfg = loadSyncCfg();
-    let activeInputMode = "isa";
+    let syncCfg = loadSync();
+    let activeMode = "isa";
     let authInstance = null;
     let currentUser = null;
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STATE_KEY);
         if (!raw) return structuredClone(defaultState);
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed.semesters) || parsed.semesters.length === 0) {
@@ -752,18 +882,17 @@
       }
     }
 
-    function loadSyncCfg() {
+    function loadSync() {
       try {
-        const raw = localStorage.getItem(SYNC_CFG_KEY);
-        return raw ? { ...defaultSyncCfg, ...JSON.parse(raw) } : { ...defaultSyncCfg };
+        const raw = localStorage.getItem(SYNC_KEY);
+        return raw ? { ...defaultSync, ...JSON.parse(raw) } : { ...defaultSync };
       } catch {
-        return { ...defaultSyncCfg };
+        return { ...defaultSync };
       }
     }
 
-    // Marks -> PESU Grade & Grade Point Mapping
-    function marksToGrade(totalMarks) {
-      const m = Number(totalMarks) || 0;
+    function marksToGrade(marks) {
+      const m = Number(marks) || 0;
       if (m >= 90) return { letter: "S", gp: 10 };
       if (m >= 80) return { letter: "A", gp: 9 };
       if (m >= 70) return { letter: "B", gp: 8 };
@@ -784,139 +913,136 @@
       return "F";
     }
 
-    // Compute Total Marks from current form state
-    function computeFormPreview() {
-      if (activeInputMode === "isa") {
-        const cat = document.getElementById("subjectCategory").value;
-        const isa1 = parseFloat(document.getElementById("isa1Input").value) || 0;
-        const isa2 = parseFloat(document.getElementById("isa2Input").value) || 0;
-        const assign = parseFloat(document.getElementById("assignInput").value) || 0;
-        const esa = parseFloat(document.getElementById("esaInput").value) || 0;
-        const lab = parseFloat(document.getElementById("labMarksInput").value) || 0;
+    function computePreview() {
+      if (activeMode === "isa") {
+        const fmt = document.getElementById("subFormat").value;
+        const isa1 = parseFloat(document.getElementById("isa1").value) || 0;
+        const isa2 = parseFloat(document.getElementById("isa2").value) || 0;
+        const assign = parseFloat(document.getElementById("assignMarks").value) || 0;
+        const esa = parseFloat(document.getElementById("esaMarks").value) || 0;
+        const lab = parseFloat(document.getElementById("labMarks").value) || 0;
 
-        // Formula: (ISA1 + ISA2)/2 + Assignment + ESA/2 for non-lab subjects
-        const theoryTotal = (isa1 + isa2) / 2 + assign + esa / 2;
-        const total = cat === "with_lab"
-          ? Math.min(100, theoryTotal * 0.75 + lab * 0.25)
-          : Math.min(100, theoryTotal);
+        // Non-lab formula: (ISA1 + ISA2)/2 + Assignment + ESA/2
+        const baseTheory = (isa1 + isa2) / 2 + assign + esa / 2;
+        const total = fmt === "with_lab"
+          ? Math.min(100, baseTheory * 0.75 + lab * 0.25)
+          : Math.min(100, baseTheory);
 
-        const grade = marksToGrade(total);
-        const detail = cat === "with_lab"
-          ? `ISA1:${isa1}, ISA2:${isa2}, Asg:${assign}, ESA:${esa}, Lab:${lab}`
+        const g = marksToGrade(total);
+        const detail = fmt === "with_lab"
+          ? `ISA1:${isa1} ISA2:${isa2} Asg:${assign} ESA:${esa} Lab:${lab}`
           : `(${isa1}+${isa2})/2 + ${assign} + ${esa}/2`;
 
         return {
           total: Math.round(total * 100) / 100,
-          letter: grade.letter,
-          gp: grade.gp,
+          letter: g.letter,
+          gp: g.gp,
           detail,
           isAudit: false
         };
       }
 
-      if (activeInputMode === "direct_marks") {
-        const raw = parseFloat(document.getElementById("directTotalMarksInput").value) || 0;
-        const clamped = Math.max(0, Math.min(100, raw));
-        const type = document.getElementById("directMarksType").value;
-        const grade = marksToGrade(clamped);
+      if (activeMode === "direct_marks") {
+        const raw = parseFloat(document.getElementById("directMarksInput").value) || 0;
+        const total = Math.max(0, Math.min(100, raw));
+        const kind = document.getElementById("directMarksKind").value;
+        const g = marksToGrade(total);
         return {
-          total: Math.round(clamped * 100) / 100,
-          letter: grade.letter,
-          gp: grade.gp,
-          detail: `Direct Marks (${type})`,
+          total: Math.round(total * 100) / 100,
+          letter: g.letter,
+          gp: g.gp,
+          detail: `Direct Marks (${kind})`,
           isAudit: false
         };
       }
 
-      // direct_gp
-      const gp = parseFloat(document.getElementById("directGpSelect").value) || 0;
-      const type = document.getElementById("directGpType").value;
-      const isAudit = type === "Audit";
+      const gp = parseFloat(document.getElementById("directGpInput").value) || 0;
+      const kind = document.getElementById("directGpKind").value;
+      const isAudit = kind === "Audit";
       return {
         total: null,
         letter: isAudit ? "Audit" : gpToLetter(gp),
         gp: isAudit ? 0 : gp,
-        detail: `Direct Grade (${type})`,
+        detail: `Direct GP (${kind})`,
         isAudit
       };
     }
 
-    function updatePreviewBar() {
-      const p = computeFormPreview();
-      document.getElementById("previewTotalMarks").textContent =
-        p.total !== null ? p.total.toFixed(2) : "N/A";
-      document.getElementById("previewLetterGrade").textContent = p.letter;
-      document.getElementById("previewGp").textContent = p.isAudit ? "—" : p.gp;
+    function updatePreview() {
+      const p = computePreview();
+      document.getElementById("prevTotal").textContent = p.total !== null ? p.total.toFixed(2) : "—";
+      document.getElementById("prevGrade").textContent = p.letter;
+      document.getElementById("prevGp").textContent = p.isAudit ? "—" : p.gp;
     }
 
-    // Cloud Sync Helpers
-    function logCloud(msg, color = "var(--muted)") {
-      const el = document.getElementById("cloudLog");
+    function setView(viewName) {
+      document.querySelectorAll(".view-section").forEach((sec) => {
+        sec.classList.toggle("hidden", sec.id !== `view-${viewName}`);
+      });
+      document.querySelectorAll(".nav-btn[data-view]").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.view === viewName);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // Firebase Sync
+    function logSync(msg, color = "var(--muted)") {
+      const el = document.getElementById("syncLog");
       el.textContent = msg;
       el.style.color = color;
     }
 
-    function setSyncBadge(text) {
-      document.getElementById("syncBadge").textContent = text;
-    }
-
-    function getDatabaseBaseUrl() {
-      let parsedUrl = "";
-      if (syncCfg.firebaseConfigText?.trim()) {
+    function getDbBase() {
+      let fromCfg = "";
+      if (syncCfg.webConfigText?.trim()) {
         try {
-          const cfgObj = JSON.parse(syncCfg.firebaseConfigText.trim());
-          if (cfgObj.databaseURL) parsedUrl = cfgObj.databaseURL.trim();
+          const obj = JSON.parse(syncCfg.webConfigText.trim());
+          if (obj.databaseURL) fromCfg = obj.databaseURL.trim();
         } catch {}
       }
-      const direct = (syncCfg.dbUrl || "").trim();
-      return (direct || parsedUrl).replace(/\/+$/, "");
+      return ((syncCfg.dbUrl || "").trim() || fromCfg).replace(/\/+$/, "");
     }
 
-    function getCloudRecordUrl() {
-      const base = getDatabaseBaseUrl();
+    function getRecordUrl() {
+      const base = getDbBase();
       if (!base) return null;
       if (currentUser?.uid) {
-        return `${base}/pesu_cgpa_users/${encodeURIComponent(currentUser.uid)}.json`;
+        return `${base}/grades_users/${encodeURIComponent(currentUser.uid)}.json`;
       }
       const key = (syncCfg.syncKey || "").trim();
       if (!key) return null;
-      return `${base}/pesu_cgpa_sync/${encodeURIComponent(key)}.json`;
+      return `${base}/grades_sync/${encodeURIComponent(key)}.json`;
     }
 
-    async function pushToCloud() {
-      const url = getCloudRecordUrl();
+    async function pushCloud() {
+      const url = getRecordUrl();
       if (!url) {
-        logCloud("Saved locally. Add Firebase Database URL + Sync Key or sign in with Google to sync.");
-        setSyncBadge("Local Only");
+        document.getElementById("syncChip").textContent = "Local";
         return;
       }
-      logCloud("Pushing to Firebase...", "var(--amber)");
+      logSync("Syncing to Firebase...", "var(--amber)");
       try {
         const res = await fetch(url, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             data: state,
-            ownerEmail: currentUser?.email || null,
             updatedAt: new Date().toISOString()
           })
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        logCloud(`Synced to cloud at ${new Date().toLocaleTimeString()}`, "var(--green)");
-        setSyncBadge(currentUser ? "Google Synced" : "Key Synced");
+        document.getElementById("syncChip").textContent = currentUser ? "Google Synced" : "Key Synced";
+        logSync(`Synced at ${new Date().toLocaleTimeString()}`, "var(--green)");
       } catch (err) {
-        logCloud(`Sync failed: ${err.message}`, "var(--red)");
-        setSyncBadge("Sync Error");
+        document.getElementById("syncChip").textContent = "Sync Error";
+        logSync(`Sync failed: ${err.message}`, "var(--red)");
       }
     }
 
-    async function pullFromCloud() {
-      const url = getCloudRecordUrl();
-      if (!url) {
-        logCloud("Configure Firebase URL + Sync Key or Google Sign-In first.", "var(--amber)");
-        return;
-      }
-      logCloud("Pulling latest records...", "var(--amber)");
+    async function pullCloud() {
+      const url = getRecordUrl();
+      if (!url) return;
+      logSync("Pulling from Firebase...", "var(--amber)");
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -927,88 +1053,90 @@
             ...json.data,
             activeSemId: json.data.activeSemId || json.data.semesters[0].id
           };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-          syncInputsFromState();
+          localStorage.setItem(STATE_KEY, JSON.stringify(state));
+          syncFormInputs();
           renderAll();
-          logCloud("Loaded latest cloud records.", "var(--green)");
-          setSyncBadge(currentUser ? "Google Synced" : "Key Synced");
+          document.getElementById("syncChip").textContent = currentUser ? "Google Synced" : "Key Synced";
+          logSync("Loaded latest cloud data.", "var(--green)");
         } else {
-          await pushToCloud();
+          await pushCloud();
         }
       } catch (err) {
-        logCloud(`Cloud pull failed: ${err.message}`, "var(--red)");
-        setSyncBadge("Sync Error");
+        logSync(`Pull failed: ${err.message}`, "var(--red)");
       }
     }
 
     function saveState(shouldPush = true) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (err) {
-        alert("Storage error: " + err.message);
-      }
-      if (shouldPush) pushToCloud();
+      localStorage.setItem(STATE_KEY, JSON.stringify(state));
+      if (shouldPush) pushCloud();
     }
 
-    function initFirebaseAuthIfConfigured() {
-      const raw = (syncCfg.firebaseConfigText || "").trim();
+    function initAuth() {
+      const raw = (syncCfg.webConfigText || "").trim();
       if (!raw) return;
       try {
-        const firebaseConfig = JSON.parse(raw);
-        if (!firebaseConfig.apiKey || !firebaseConfig.projectId) return;
-        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+        const cfg = JSON.parse(raw);
+        if (!cfg.apiKey || !cfg.projectId) return;
+        const app = getApps().length === 0 ? initializeApp(cfg) : getApps()[0];
         authInstance = getAuth(app);
         onAuthStateChanged(authInstance, async (user) => {
           currentUser = user;
-          const badgeEl = document.getElementById("authStatusLabel");
-          const signInBtn = document.getElementById("googleSignInBtn");
-          const signOutBtn = document.getElementById("googleSignOutBtn");
+          const label = document.getElementById("authLabel");
+          const inBtn = document.getElementById("googleSignInBtn");
+          const outBtn = document.getElementById("googleSignOutBtn");
 
           if (user) {
-            badgeEl.textContent = user.displayName || user.email || "Signed in";
-            signInBtn.classList.add("hidden");
-            signOutBtn.classList.remove("hidden");
-            await pullFromCloud();
+            label.textContent = user.displayName || user.email || "Google User";
+            inBtn.classList.add("hidden");
+            outBtn.classList.remove("hidden");
+            await pullCloud();
           } else {
-            badgeEl.textContent = syncCfg.syncKey ? `Sync Key: ${syncCfg.syncKey}` : "Guest Mode (Local)";
-            signInBtn.classList.remove("hidden");
-            signOutBtn.classList.add("hidden");
+            label.textContent = syncCfg.syncKey ? `Key: ${syncCfg.syncKey}` : "Local Mode";
+            inBtn.classList.remove("hidden");
+            outBtn.classList.add("hidden");
           }
         });
       } catch (err) {
-        logCloud(`Invalid Firebase Config JSON: ${err.message}`, "var(--red)");
+        logSync(`Invalid Firebase config: ${err.message}`, "var(--red)");
       }
     }
 
-    // Metrics
-    function calcSemesterMetrics(sem) {
-      let gradedCredits = 0;
-      let weightedPoints = 0;
+    // Calculations
+    function semStats(sem) {
+      let credits = 0;
+      let points = 0;
       for (const c of sem.courses) {
         if (c.isAudit) continue;
         const cr = Number(c.credits) || 0;
         const gp = Number(c.gradePoint) || 0;
-        gradedCredits += cr;
-        weightedPoints += cr * gp;
+        credits += cr;
+        points += cr * gp;
       }
-      const sgpa = gradedCredits > 0 ? weightedPoints / gradedCredits : 0;
-      return { gradedCredits, weightedPoints, sgpa, courseCount: sem.courses.length };
+      return {
+        credits,
+        points,
+        sgpa: credits > 0 ? points / credits : 0,
+        count: sem.courses.length
+      };
     }
 
-    function calcOverallMetrics() {
+    function overallStats() {
       let totalCredits = 0;
       let totalPoints = 0;
       for (const sem of state.semesters) {
-        const m = calcSemesterMetrics(sem);
-        totalCredits += m.gradedCredits;
-        totalPoints += m.weightedPoints;
+        const s = semStats(sem);
+        totalCredits += s.credits;
+        totalPoints += s.points;
       }
-      const cgpa = totalCredits > 0 ? totalPoints / totalCredits : 0;
-      return { totalCredits, totalPoints, cgpa };
+      return {
+        totalCredits,
+        totalPoints,
+        cgpa: totalCredits > 0 ? totalPoints / totalCredits : 0
+      };
     }
 
-    function convertCgpaToPercentage(cgpa) {
-      switch (state.pctFormula) {
+    function toPercentage(cgpa) {
+      switch (state.pctRule) {
         case "sub075_mul10": return cgpa > 0 ? (cgpa - 0.75) * 10 : 0;
         case "mul95": return cgpa * 9.5;
         case "sub05_mul10": return cgpa > 0 ? (cgpa - 0.5) * 10 : 0;
@@ -1017,128 +1145,122 @@
       }
     }
 
-    function getFormulaLabel() {
-      switch (state.pctFormula) {
-        case "sub075_mul10": return "Formula: (CGPA − 0.75) × 10";
-        case "mul95": return "Formula: CGPA × 9.5";
-        case "sub05_mul10": return "Formula: (CGPA − 0.50) × 10";
+    function pctLabel() {
+      switch (state.pctRule) {
+        case "sub075_mul10": return "(CGPA − 0.75) × 10";
+        case "mul95": return "CGPA × 9.5";
+        case "sub05_mul10": return "(CGPA − 0.50) × 10";
         case "mul10":
-        default: return "Formula: CGPA × 10";
+        default: return "CGPA × 10";
       }
     }
 
-    function getActiveSemester() {
+    function activeSem() {
       return state.semesters.find((s) => s.id === state.activeSemId) || state.semesters[0];
     }
 
-    function escapeHtml(str) {
-      return String(str)
+    function esc(s) {
+      return String(s)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
     }
 
-    // Rendering
-    function renderKpis() {
-      const overall = calcOverallMetrics();
-      const activeSem = getActiveSemester();
-      const activeMetrics = calcSemesterMetrics(activeSem);
-      const pct = convertCgpaToPercentage(overall.cgpa);
+    // Renderers
+    function renderAll() {
+      const ov = overallStats();
+      const sem = activeSem();
+      const ss = semStats(sem);
+      const hasAnyCourse = state.semesters.some((s) => s.courses.length > 0);
 
-      document.getElementById("cgpaValue").textContent = overall.cgpa.toFixed(2);
-      document.getElementById("cgpaSub").textContent = `${overall.totalCredits} graded credits across ${state.semesters.length} sem(s)`;
+      document.getElementById("emptyHeroCard").classList.toggle("hidden", hasAnyCourse);
+      document.getElementById("cgpaVal").textContent = ov.cgpa.toFixed(2);
+      document.getElementById("cgpaSub").textContent = `${ov.totalCredits} graded credits`;
+      document.getElementById("sgpaVal").textContent = ss.sgpa.toFixed(2);
+      document.getElementById("sgpaSub").textContent = `${sem.name} (${ss.credits} cr)`;
+      document.getElementById("pctVal").textContent = `${Math.max(0, toPercentage(ov.cgpa)).toFixed(1)}%`;
+      document.getElementById("pctSub").textContent = pctLabel();
+      document.getElementById("creditsVal").textContent = ov.totalCredits;
+      document.getElementById("semCountSub").textContent = `${state.semesters.length} semester(s)`;
+      document.getElementById("semSummaryChip").textContent = `${state.semesters.length} Semester(s)`;
+      document.getElementById("activeSemHeading").textContent = `${sem.name} Subjects`;
 
-      document.getElementById("activeSgpaValue").textContent = activeMetrics.sgpa.toFixed(2);
-      document.getElementById("activeSgpaSub").textContent = `${activeSem.name} (${activeMetrics.gradedCredits} cr)`;
+      // Semester summary table
+      const sumBody = document.getElementById("semSummaryBody");
+      sumBody.innerHTML = "";
+      state.semesters.forEach((s) => {
+        const st = semStats(s);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${esc(s.name)}</strong></td>
+          <td class="num">${st.count}</td>
+          <td class="num">${st.credits}</td>
+          <td class="num"><strong>${st.sgpa.toFixed(2)}</strong></td>
+        `;
+        sumBody.appendChild(tr);
+      });
 
-      document.getElementById("pctValue").textContent = `${Math.max(0, pct).toFixed(1)}%`;
-      document.getElementById("pctFormulaLabel").textContent = getFormulaLabel();
-
-      document.getElementById("totalCreditsValue").textContent = overall.totalCredits;
-      document.getElementById("semCountSub").textContent = `Across ${state.semesters.length} semester(s)`;
-    }
-
-    function renderSemTabsAndCourses() {
-      const tabsEl = document.getElementById("semTabs");
-      tabsEl.innerHTML = "";
-
-      state.semesters.forEach((sem) => {
+      // Semester tabs
+      const tabs = document.getElementById("semTabs");
+      tabs.innerHTML = "";
+      state.semesters.forEach((s) => {
+        const st = semStats(s);
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = `tab-btn ${sem.id === state.activeSemId ? "active" : ""}`;
-        const m = calcSemesterMetrics(sem);
-        btn.textContent = `${sem.name} (${m.sgpa.toFixed(2)})`;
+        btn.className = `pill-btn ${s.id === sem.id ? "active" : ""}`;
+        btn.textContent = `${s.name} (${st.sgpa.toFixed(2)})`;
         btn.addEventListener("click", () => {
-          state.activeSemId = sem.id;
+          state.activeSemId = s.id;
           saveState(false);
           renderAll();
         });
-        tabsEl.appendChild(btn);
+        tabs.appendChild(btn);
       });
 
-      const activeSem = getActiveSemester();
-      const tbody = document.getElementById("courseTableBody");
+      // Subject rows
+      const tbody = document.getElementById("subjectTableBody");
       tbody.innerHTML = "";
+      if (sem.courses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No subjects in ${esc(sem.name)} yet.</td></tr>`;
+      } else {
+        sem.courses.forEach((c) => {
+          const tr = document.createElement("tr");
+          const totalDisplay = c.totalMarks !== null && c.totalMarks !== undefined
+            ? Number(c.totalMarks).toFixed(1)
+            : "—";
+          const gradeDisplay = c.isAudit
+            ? "Audit"
+            : `${esc(c.letterGrade || gpToLetter(c.gradePoint))} (${Number(c.gradePoint)})`;
 
-      if (activeSem.courses.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No subjects added to ${escapeHtml(activeSem.name)} yet.</td></tr>`;
-        return;
+          tr.innerHTML = `
+            <td>
+              <strong>${esc(c.name)}</strong>
+              ${c.code ? `<div class="helper" style="margin-top:2px;">${esc(c.code)}</div>` : ""}
+            </td>
+            <td class="helper">${esc(c.detail || "")}</td>
+            <td class="num">${totalDisplay}</td>
+            <td class="num">${Number(c.credits)}</td>
+            <td class="num"><strong>${gradeDisplay}</strong></td>
+            <td class="num"><button type="button" class="danger">Delete</button></td>
+          `;
+          tr.querySelector("button").addEventListener("click", () => {
+            sem.courses = sem.courses.filter((x) => x.id !== c.id);
+            saveState(true);
+            renderAll();
+          });
+          tbody.appendChild(tr);
+        });
       }
 
-      activeSem.courses.forEach((course) => {
-        const tr = document.createElement("tr");
-        const totalStr = course.totalMarks !== null && course.totalMarks !== undefined
-          ? Number(course.totalMarks).toFixed(1)
-          : "—";
-        const gradeStr = course.isAudit
-          ? "Audit"
-          : `${escapeHtml(course.letterGrade || gpToLetter(course.gradePoint))} (${Number(course.gradePoint)})`;
-
-        tr.innerHTML = `
-          <td>
-            <strong>${escapeHtml(course.name)}</strong>
-            ${course.code ? `<div style="font-size:0.75rem;color:var(--muted);">${escapeHtml(course.code)}</div>` : ""}
-          </td>
-          <td style="font-size:0.8rem;color:var(--muted);">${escapeHtml(course.detail || "")}</td>
-          <td class="num">${totalStr}</td>
-          <td class="num">${Number(course.credits)}</td>
-          <td class="num"><strong>${gradeStr}</strong></td>
-          <td class="num"><button type="button" class="danger">Remove</button></td>
-        `;
-
-        tr.querySelector("button").addEventListener("click", () => {
-          activeSem.courses = activeSem.courses.filter((x) => x.id !== course.id);
-          saveState(true);
-          renderAll();
-        });
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderSemesterSummaryTable() {
-      const tbody = document.getElementById("semSummaryBody");
-      tbody.innerHTML = "";
-      document.getElementById("semOverviewBadge").textContent = `${state.semesters.length} Semester(s)`;
-
-      state.semesters.forEach((sem) => {
-        const m = calcSemesterMetrics(sem);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${escapeHtml(sem.name)}</strong></td>
-          <td class="num">${m.courseCount}</td>
-          <td class="num">${m.gradedCredits}</td>
-          <td class="num"><strong>${m.sgpa.toFixed(2)}</strong></td>
-        `;
-        tbody.appendChild(tr);
-      });
+      renderSimulator();
+      updatePreview();
     }
 
     function renderSimulator() {
-      const target = parseFloat(document.getElementById("targetCgpaInput").value);
-      const upcoming = parseFloat(document.getElementById("upcomingCreditsInput").value);
-      const out = document.getElementById("simulatorOutput");
+      const target = parseFloat(document.getElementById("targetCgpa").value);
+      const upcoming = parseFloat(document.getElementById("upcomingCredits").value);
+      const out = document.getElementById("simResult");
 
       if (!Number.isFinite(target) || !Number.isFinite(upcoming) || upcoming <= 0) {
         out.textContent = "Enter valid target CGPA and upcoming credits.";
@@ -1148,148 +1270,138 @@
       state.targetCgpa = target;
       state.upcomingCredits = upcoming;
 
-      const overall = calcOverallMetrics();
-      const neededTotalPoints = target * (overall.totalCredits + upcoming);
-      const requiredSgpa = (neededTotalPoints - overall.totalPoints) / upcoming;
+      const ov = overallStats();
+      const needed = (target * (ov.totalCredits + upcoming) - ov.totalPoints) / upcoming;
 
-      if (requiredSgpa <= 0) {
-        out.innerHTML = `<span class="ok">Already achieved!</span> Your current points already sustain ≥ ${target.toFixed(2)} CGPA.`;
-      } else if (requiredSgpa <= 10) {
-        out.innerHTML = `Required SGPA in next <strong>${upcoming}</strong> credits: <span class="ok">${requiredSgpa.toFixed(2)}</span> / 10.00`;
+      if (needed <= 0) {
+        out.innerHTML = `<span class="ok">Already on track!</span> Your current points already meet ≥ ${target.toFixed(2)} CGPA.`;
+      } else if (needed <= 10) {
+        out.innerHTML = `Required SGPA across next <strong>${upcoming}</strong> credits: <span class="ok">${needed.toFixed(2)}</span> / 10.00`;
       } else {
-        out.innerHTML = `Required SGPA is <span class="bad">${requiredSgpa.toFixed(2)}</span> (exceeds 10.00 scale).`;
+        out.innerHTML = `Required SGPA is <span class="bad">${needed.toFixed(2)}</span> (exceeds 10.00 scale).`;
       }
     }
 
-    function syncInputsFromState() {
-      document.getElementById("targetCgpaInput").value = state.targetCgpa;
-      document.getElementById("upcomingCreditsInput").value = state.upcomingCredits;
-      document.getElementById("pctFormulaSelect").value = state.pctFormula;
-      document.getElementById("dbUrlInput").value = syncCfg.dbUrl || "";
-      document.getElementById("syncKeyInput").value = syncCfg.syncKey || "";
-      document.getElementById("firebaseConfigInput").value = syncCfg.firebaseConfigText || "";
-      document.getElementById("pesuApiEndpointInput").value = syncCfg.pesuApiEndpoint || "";
+    function syncFormInputs() {
+      document.getElementById("targetCgpa").value = state.targetCgpa;
+      document.getElementById("upcomingCredits").value = state.upcomingCredits;
+      document.getElementById("pctRuleSelect").value = state.pctRule;
+      document.getElementById("fbDbUrl").value = syncCfg.dbUrl || "";
+      document.getElementById("fbSyncKey").value = syncCfg.syncKey || "";
+      document.getElementById("fbWebConfig").value = syncCfg.webConfigText || "";
     }
 
-    function renderAll() {
-      renderKpis();
-      renderSemTabsAndCourses();
-      renderSemesterSummaryTable();
-      renderSimulator();
-      updatePreviewBar();
-    }
+    // Navigation & Actions
+    document.querySelectorAll(".nav-btn[data-view]").forEach((btn) => {
+      btn.addEventListener("click", () => setView(btn.dataset.view));
+    });
 
-    // Mode Switching
+    document.getElementById("fabAddBtn").addEventListener("click", () => {
+      setView("subjects");
+      document.getElementById("subName").focus();
+    });
+
+    document.getElementById("heroAddSubjectBtn").addEventListener("click", () => setView("subjects"));
+    document.getElementById("heroOpenSettingsBtn").addEventListener("click", () => setView("settings"));
+    document.getElementById("jumpSimulatorBtn").addEventListener("click", () => setView("simulator"));
+
     document.getElementById("modeTabs").addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-mode]");
       if (!btn) return;
-      activeInputMode = btn.dataset.mode;
-
-      document.querySelectorAll("#modeTabs .tab-btn").forEach((b) => b.classList.remove("active"));
+      activeMode = btn.dataset.mode;
+      document.querySelectorAll("#modeTabs .pill-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
 
-      const form = document.getElementById("courseForm");
-      const pdfPanel = document.getElementById("panelPdfImport");
+      const isPdf = activeMode === "pdf_import";
+      document.getElementById("subjectForm").classList.toggle("hidden", isPdf);
+      document.getElementById("panelPdf").classList.toggle("hidden", !isPdf);
 
-      if (activeInputMode === "pdf_import") {
-        form.classList.add("hidden");
-        pdfPanel.classList.remove("hidden");
-        return;
-      }
-
-      form.classList.remove("hidden");
-      pdfPanel.classList.add("hidden");
-
-      document.getElementById("panelIsa").classList.toggle("hidden", activeInputMode !== "isa");
-      document.getElementById("panelDirectMarks").classList.toggle("hidden", activeInputMode !== "direct_marks");
-      document.getElementById("panelDirectGp").classList.toggle("hidden", activeInputMode !== "direct_gp");
-      updatePreviewBar();
+      document.getElementById("panelIsa").classList.toggle("hidden", activeMode !== "isa");
+      document.getElementById("panelDirectMarks").classList.toggle("hidden", activeMode !== "direct_marks");
+      document.getElementById("panelDirectGp").classList.toggle("hidden", activeMode !== "direct_gp");
+      updatePreview();
     });
 
-    document.getElementById("subjectCategory").addEventListener("change", (e) => {
-      document.getElementById("labMarksWrap").classList.toggle("hidden", e.target.value !== "with_lab");
-      updatePreviewBar();
+    document.getElementById("subFormat").addEventListener("change", (e) => {
+      document.getElementById("labFieldBox").classList.toggle("hidden", e.target.value !== "with_lab");
+      updatePreview();
     });
 
-    ["isa1Input", "isa2Input", "assignInput", "esaInput", "labMarksInput", "directTotalMarksInput", "directMarksType", "directGpSelect", "directGpType"]
+    ["isa1", "isa2", "assignMarks", "esaMarks", "labMarks", "directMarksInput", "directMarksKind", "directGpInput", "directGpKind"]
       .forEach((id) => {
-        document.getElementById(id).addEventListener("input", updatePreviewBar);
-        document.getElementById(id).addEventListener("change", updatePreviewBar);
+        document.getElementById(id).addEventListener("input", updatePreview);
+        document.getElementById(id).addEventListener("change", updatePreview);
       });
 
-    // Add Subject Submit
-    document.getElementById("courseForm").addEventListener("submit", (e) => {
+    document.getElementById("subjectForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const name = document.getElementById("courseName").value.trim();
-      const code = document.getElementById("courseCode").value.trim();
-      const credits = parseFloat(document.getElementById("courseCredits").value);
+      const name = document.getElementById("subName").value.trim();
+      const code = document.getElementById("subCode").value.trim();
+      const credits = parseFloat(document.getElementById("subCredits").value);
       if (!name || !Number.isFinite(credits) || credits <= 0) return;
 
-      const preview = computeFormPreview();
-      const activeSem = getActiveSemester();
-      activeSem.courses.push({
-        id: "c-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+      const p = computePreview();
+      activeSem().courses.push({
+        id: "sub-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
         name,
         code,
         credits,
-        totalMarks: preview.total,
-        letterGrade: preview.letter,
-        gradePoint: preview.gp,
-        detail: preview.detail,
-        isAudit: preview.isAudit
+        totalMarks: p.total,
+        letterGrade: p.letter,
+        gradePoint: p.gp,
+        detail: p.detail,
+        isAudit: p.isAudit
       });
 
       saveState(true);
       e.target.reset();
-      document.getElementById("courseCredits").value = "4";
-      document.getElementById("labMarksWrap").classList.add("hidden");
+      document.getElementById("subCredits").value = "4";
+      document.getElementById("labFieldBox").classList.add("hidden");
       renderAll();
     });
 
-    // Client-Side PDF Parser for Lab / Grade Card PDFs
-    document.getElementById("pdfUploadInput").addEventListener("change", async (e) => {
+    document.getElementById("pdfFileInput").addEventListener("change", async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      const statusEl = document.getElementById("pdfParseStatus");
-      statusEl.textContent = "Reading PDF pages...";
+      const status = document.getElementById("pdfStatus");
+      status.textContent = "Parsing PDF...";
 
       try {
-        const buffer = await file.arrayBuffer();
-        const pdf = await window.pdfjsLib.getDocument({ data: buffer }).promise;
-        let fullText = "";
+        const buf = await file.arrayBuffer();
+        const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+        let text = "";
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          fullText += "\n" + content.items.map((item) => item.str).join(" ");
+          text += "\n" + content.items.map((item) => item.str).join(" ");
         }
 
-        // Match PESU-style course rows: e.g. UE24CS151A Course Title 4 S (or numeric marks)
-        const courseRegex = /\b([A-Z]{2}\d{2}[A-Z]{2}\d{3}[A-Z]?)\s+([A-Za-z0-9 &(),\-/]+?)\s+(\d(?:\.\d)?)\s+(S|A|B|C|D|E|F|\d{2,3}(?:\.\d+)?)\b/g;
-        const gradeMap = { S: 10, A: 9, B: 8, C: 7, D: 6, E: 5, F: 0 };
-        const activeSem = getActiveSemester();
-        let added = 0;
+        const regex = /\b([A-Z]{2}\d{2}[A-Z]{2}\d{3}[A-Z]?)\s+([A-Za-z0-9 &(),\-/]+?)\s+(\d(?:\.\d)?)\s+(S|A|B|C|D|E|F|\d{2,3}(?:\.\d+)?)\b/g;
+        const gpMap = { S: 10, A: 9, B: 8, C: 7, D: 6, E: 5, F: 0 };
+        const sem = activeSem();
+        let count = 0;
 
-        for (const match of fullText.matchAll(courseRegex)) {
-          const [, code, rawTitle, crStr, gradeOrMarks] = match;
-          const credits = parseFloat(crStr);
-          const title = rawTitle.trim();
+        for (const match of text.matchAll(regex)) {
+          const [, code, titleRaw, crRaw, val] = match;
+          const credits = parseFloat(crRaw);
+          const title = titleRaw.trim();
           if (!title || !Number.isFinite(credits)) continue;
 
           let totalMarks = null;
           let letterGrade = "F";
           let gradePoint = 0;
 
-          if (gradeOrMarks in gradeMap) {
-            letterGrade = gradeOrMarks;
-            gradePoint = gradeMap[gradeOrMarks];
+          if (val in gpMap) {
+            letterGrade = val;
+            gradePoint = gpMap[val];
           } else {
-            totalMarks = parseFloat(gradeOrMarks);
+            totalMarks = parseFloat(val);
             const g = marksToGrade(totalMarks);
             letterGrade = g.letter;
             gradePoint = g.gp;
           }
 
-          activeSem.courses.push({
+          sem.courses.push({
             id: "pdf-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
             name: title,
             code,
@@ -1300,141 +1412,77 @@
             detail: "Imported from PDF",
             isAudit: false
           });
-          added += 1;
+          count += 1;
         }
 
-        if (added > 0) {
+        if (count > 0) {
           saveState(true);
           renderAll();
-          statusEl.innerHTML = `<span class="ok">Imported ${added} subject(s) from ${escapeHtml(file.name)}.</span>`;
+          status.innerHTML = `<span class="ok">Added ${count} subject(s) from ${esc(file.name)}.</span>`;
         } else {
-          statusEl.innerHTML = `<span class="warn">Could not auto-detect standard PESU course rows in this PDF layout. You can enter the lab/subject marks in Tab 1 or Tab 2.</span>`;
+          status.innerHTML = `<span class="warn">No matching course rows found in PDF. Use the manual tabs above.</span>`;
         }
       } catch (err) {
-        statusEl.innerHTML = `<span class="bad">PDF read error: ${escapeHtml(err.message)}</span>`;
+        status.innerHTML = `<span class="bad">PDF error: ${esc(err.message)}</span>`;
       } finally {
         e.target.value = "";
       }
     });
 
-    // PESU Academy Credentials Auto-Fetch Handler
-    document.getElementById("pesuFetchForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("pesuUserInput").value.trim();
-      const password = document.getElementById("pesuPassInput").value;
-      const endpoint = document.getElementById("pesuApiEndpointInput").value.trim();
-      const statusEl = document.getElementById("pesuFetchStatus");
-
-      // Save only the non-sensitive endpoint URL
-      syncCfg.pesuApiEndpoint = endpoint;
-      localStorage.setItem(SYNC_CFG_KEY, JSON.stringify(syncCfg));
-
-      if (!endpoint) {
-        statusEl.innerHTML = `<span class="warn">No PESU API endpoint configured.</span> Static browser pages cannot log into <code>pesuacademy.com</code> directly due to browser CORS security. Deploy a lightweight PESU API proxy (e.g., Vercel function) and paste its URL above, or upload your PESU result PDF in <strong>Tab 4</strong>.`;
-        document.getElementById("pesuPassInput").value = "";
-        return;
-      }
-
-      statusEl.innerHTML = `<span class="warn">Authenticating with PESU endpoint &amp; fetching marks...</span>`;
-      try {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        document.getElementById("pesuPassInput").value = "";
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const payload = await res.json();
-
-        const incomingCourses = Array.isArray(payload.courses) ? payload.courses : [];
-        if (incomingCourses.length === 0) {
-          throw new Error(payload.message || "No course records returned.");
-        }
-
-        const activeSem = getActiveSemester();
-        incomingCourses.forEach((c) => {
-          const total = typeof c.total === "number" ? c.total : null;
-          const g = total !== null ? marksToGrade(total) : { letter: c.grade || "B", gp: Number(c.gp) || 8 };
-          activeSem.courses.push({
-            id: "pesu-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
-            name: c.name || c.title || "PESU Course",
-            code: c.code || "",
-            credits: Number(c.credits) || 4,
-            totalMarks: total,
-            letterGrade: g.letter,
-            gradePoint: g.gp,
-            detail: "Fetched from PESU Portal",
-            isAudit: false
-          });
-        });
-
-        saveState(true);
-        renderAll();
-        statusEl.innerHTML = `<span class="ok">Fetched and imported ${incomingCourses.length} course(s) from PESU!</span>`;
-      } catch (err) {
-        document.getElementById("pesuPassInput").value = "";
-        statusEl.innerHTML = `<span class="bad">PESU fetch failed: ${escapeHtml(err.message)}</span>`;
-      }
-    });
-
-    // Semester & Settings Handlers
     document.getElementById("addSemBtn").addEventListener("click", () => {
-      const nextNum = state.semesters.length + 1;
-      const newSem = { id: "sem-" + Date.now(), name: `Semester ${nextNum}`, courses: [] };
-      state.semesters.push(newSem);
-      state.activeSemId = newSem.id;
+      const next = state.semesters.length + 1;
+      const sem = { id: "sem-" + Date.now(), name: `Semester ${next}`, courses: [] };
+      state.semesters.push(sem);
+      state.activeSemId = sem.id;
       saveState(true);
       renderAll();
     });
 
     document.getElementById("deleteSemBtn").addEventListener("click", () => {
-      if (state.semesters.length <= 1) {
-        alert("At least one semester must remain.");
-        return;
-      }
-      const activeSem = getActiveSemester();
-      if (!confirm(`Delete ${activeSem.name} and its subjects?`)) return;
-      state.semesters = state.semesters.filter((s) => s.id !== activeSem.id);
+      if (state.semesters.length <= 1) return;
+      const sem = activeSem();
+      if (!confirm(`Delete ${sem.name}?`)) return;
+      state.semesters = state.semesters.filter((s) => s.id !== sem.id);
       state.activeSemId = state.semesters[0].id;
       saveState(true);
       renderAll();
     });
 
-    document.getElementById("targetCgpaInput").addEventListener("input", () => {
+    document.getElementById("targetCgpa").addEventListener("input", () => {
       renderSimulator();
       saveState(false);
     });
 
-    document.getElementById("upcomingCreditsInput").addEventListener("input", () => {
+    document.getElementById("upcomingCredits").addEventListener("input", () => {
       renderSimulator();
       saveState(false);
     });
 
-    document.getElementById("pctFormulaSelect").addEventListener("change", (e) => {
-      state.pctFormula = e.target.value;
+    document.getElementById("pctRuleSelect").addEventListener("change", (e) => {
+      state.pctRule = e.target.value;
       saveState(true);
       renderAll();
     });
 
-    document.getElementById("saveFirebaseBtn").addEventListener("click", async () => {
+    document.getElementById("saveSyncBtn").addEventListener("click", async () => {
       syncCfg = {
-        ...syncCfg,
-        dbUrl: document.getElementById("dbUrlInput").value.trim(),
-        syncKey: document.getElementById("syncKeyInput").value.trim(),
-        firebaseConfigText: document.getElementById("firebaseConfigInput").value.trim()
+        dbUrl: document.getElementById("fbDbUrl").value.trim(),
+        syncKey: document.getElementById("fbSyncKey").value.trim(),
+        webConfigText: document.getElementById("fbWebConfig").value.trim()
       };
-      localStorage.setItem(SYNC_CFG_KEY, JSON.stringify(syncCfg));
-      initFirebaseAuthIfConfigured();
-      await pullFromCloud();
+      localStorage.setItem(SYNC_KEY, JSON.stringify(syncCfg));
+      initAuth();
+      await pullCloud();
     });
 
-    document.getElementById("pushSyncBtn").addEventListener("click", pushToCloud);
-    document.getElementById("pullSyncBtn").addEventListener("click", pullFromCloud);
+    document.getElementById("pushSyncBtn").addEventListener("click", pushCloud);
+    document.getElementById("pullSyncBtn").addEventListener("click", pullCloud);
 
     document.getElementById("googleSignInBtn").addEventListener("click", async () => {
-      if (!authInstance) initFirebaseAuthIfConfigured();
+      if (!authInstance) initAuth();
       if (!authInstance) {
-        alert("Paste your Firebase Web Config JSON in the Firebase & Google Sign-In Sync card first.");
+        alert("Paste your Firebase Web Config JSON in Settings first.");
+        setView("settings");
         return;
       }
       try {
@@ -1453,7 +1501,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `pesu-cgpa-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `grades-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -1468,7 +1516,7 @@
       try {
         const parsed = JSON.parse(await file.text());
         if (!Array.isArray(parsed.semesters) || parsed.semesters.length === 0) {
-          throw new Error("Invalid JSON format.");
+          throw new Error("Invalid JSON.");
         }
         state = {
           ...structuredClone(defaultState),
@@ -1476,7 +1524,7 @@
           activeSemId: parsed.activeSemId || parsed.semesters[0].id
         };
         saveState(true);
-        syncInputsFromState();
+        syncFormInputs();
         renderAll();
       } catch (err) {
         alert("Import failed: " + err.message);
@@ -1485,11 +1533,11 @@
       }
     });
 
-    syncInputsFromState();
+    syncFormInputs();
     renderAll();
-    initFirebaseAuthIfConfigured();
-    if (getCloudRecordUrl()) {
-      pullFromCloud();
+    initAuth();
+    if (getRecordUrl()) {
+      pullCloud();
     }
   </script>
 </body>
